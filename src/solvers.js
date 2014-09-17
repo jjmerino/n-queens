@@ -10,24 +10,54 @@
 // (There are also optimizations that will allow you to skip a lot of the dead search space)
 // take a look at solversSpec.js to see what the tests are expecting
 
+window.permutationToMatrix = function(permutations){
+  var solution =[];
+  var n = permutations.length;
+  for(var i=0; i<n; i++){
+    var row = [];
+    for(var j=0; j<n; j++){
+      if(j===permutations[i]){
+        row.push(1);
+      } else {
+        row.push(0);
+      }
+    }
+    solution.push(row);
+  }
+
+  return solution;
+};
+
 
 // return a matrix (an array of arrays) representing a single nxn chessboard, with n rooks placed such that none of them can attack each other
-
 window.findNRooksSolution = function(n) {
-  var solution = undefined; //fixme
-
-  console.log('Single solution for ' + n + ' rooks:', JSON.stringify(solution));
-  return solution;
+  var permutations = _.shuffle(_.range(0, n));
+  // console.log('Single solution for ' + n + ' rooks:', JSON.stringify(solution));
+  return permutationToMatrix(permutations);
 };
 
 
 
 // return the number of nxn chessboards that exist, with n rooks placed such that none of them can attack each other
 window.countNRooksSolutions = function(n) {
-  var solutionCount = undefined; //fixme
+  var choices = _.range(0, n);
+  var permutations = [];
 
-  console.log('Number of solutions for ' + n + ' rooks:', solutionCount);
-  return solutionCount;
+  var permute = function(roundsToGo, playedSoFar) {
+    if(_.uniq(playedSoFar).length !== playedSoFar.length){
+      return true;
+    }
+    if( roundsToGo === 0 ){
+      permutations.push( playedSoFar );
+      return;
+    }
+    for( var i = 0; i < choices.length; i++ ){
+      var currentPlay = choices[i];
+      permute( roundsToGo-1, playedSoFar.concat(currentPlay));
+    }
+  };
+  permute( n, []);
+  return permutations.length;
 };
 
 
@@ -47,4 +77,19 @@ window.countNQueensSolutions = function(n) {
 
   console.log('Number of solutions for ' + n + ' queens:', solutionCount);
   return solutionCount;
+};
+
+
+window.permutationIsValid = function(permutation){
+  var result = true;
+  _.each(permutation, function(val, index, collection){
+    _.each(permutation, function(val2, index2){
+      if(index !== index2){
+        if(Math.abs(val-val2) === Math.abs(index-index2) || val2-val === 0){
+          result = false;
+        }
+      }
+    });
+  });
+  return result;
 };

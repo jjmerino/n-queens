@@ -3,26 +3,39 @@ q = function(n){
   var numSolutions = 0;
   var setTime = Date.now();
 
-  //ld = left diagonal
-  //rd = right diagonal
-  //cols = cols
-  //n is used to see when we reach the end of the cols
+  //ld, rd, cols are bit patterns where
+    //ld --> 1 === position attacked along left diagonal
+    //rd --> 1 === position attacked along right diagonal
+    //cols --> 1 === occupied column
+
+  //n is the number of the lowest level in the decision tree
   var fn = function(ld, cols, rd, n){
 
-    //column position
+
+    // find a position that does not collide
+    // with existing queens attack locations
+    //
+    // (ld | cols | rd) contains all positions under attack
+    // ~(ld | cols | rd) contains all safe positions
     var poss = ~(ld | cols | rd) & n;
 
-    //while the column is within our board
+    //while there is a safe position for a new queen
     while(poss > 0){
+      //this will store the least significant
+      //bit pattern for the safe location
       var bit = poss & -poss;
+
+      //remove the store safe position from
+      //available safe positions
       poss -= bit;
 
-      //recurse with new position
+      //recurse with new position occupied to find more
+      //safe areas to place queens
       fn( (ld|bit)<<1, cols|bit, (rd|bit)>>1, n);
     }
 
-    //if we have reached the end of the line,
-    //it means we have found a solution
+    //if we have reached the lowest level,
+    //we have found a complete solution
     if(cols === n){
       numSolutions++;
     }

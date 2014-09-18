@@ -119,9 +119,13 @@ window.findNQueensSolution = function(n) {
 
 // return the number of nxn chessboards that exist, with n queens placed such that none of them can attack each other
 window.countNQueensSolutions = function(n) {
-  var numPermutations = solveNQueens(n).length;
-  if(n>=4&&n%2===0){return  numPermutations*2}
-  return numPermutations;
+  //Bit Shifting Solution
+  return q(n);
+
+  //Interative Solution
+  // var numPermutations = solveNQueens(n).length;
+  // if(n>=4&&n%2===0){return  numPermutations*2}
+  // return numPermutations;
 };
 // This special case is only valid if we are doing recursively
 window.lastTwoPermutationsValid = function(permutation){

@@ -1,11 +1,27 @@
 q = function(n){
+  var realN = n;
   var halfN = 1<<(n>>1);
   if(n%2 !== 0){
     halfN = 1<<n;
   }
   var numSolutions = 0;
   var setTime = Date.now();
+  var workers = 0;
+  var useWorkers = n>12?true:false;
 
+  var workerCallback = function(e) {
+    numSolutions+=e.data;
+    workers--;
+    if(workers<=0){
+      if(n%2===0){
+        numSolutions *= 2;
+      }
+      //console.log(Date.now()-setTime + 'ms');
+      console.log("Solved " + n + " Queens in" , Date.now()-setTime + 'ms. With workers');
+      console.log('Solutions = '+numSolutions);
+
+    }
+  };
   //Can we make this iterative?
 
   //ld, rd, cols are bit patterns where
@@ -38,6 +54,11 @@ q = function(n){
       //safe areas to place queens
       // console.log(bit , " " , 1<<(realN/2));
       if(depth === 1&& bit >= halfN){
+      }else if(depth===1&& useWorkers){
+        var worker = new Worker('src/worker.js');
+        worker.addEventListener('message', workerCallback, false);
+        worker.postMessage({ld:(ld|bit)<<1, cols:cols|bit, rd: (rd|bit)>>1, n: n,depth: depth<<1});
+        workers++;
       }else{
         fn( (ld|bit)<<1, cols|bit, (rd|bit)>>1, n, depth<<1);
       }
@@ -52,9 +73,13 @@ q = function(n){
   //start
   fn(0,0,0, (1<<n)-1, 1);
 
-  console.log("Solved " + n + " Queens in" , Date.now()-setTime + 'ms');
-  if(n%2 === 0){
-    numSoultions *=2;
+  if(n%2 === 0 && !useWorkers){
+    console.log("Solved " + n + " Queens in" , Date.now()-setTime + 'ms. No workers');
+
+    numSolutions *=2;
+  }else{
+    //console.log("Created " + n + " Workers to find our queens");
+
   }
   return numSolutions;
 };

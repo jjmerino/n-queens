@@ -12,7 +12,13 @@
 
 window.permutationToMatrix = function(permutations){
   var solution =[];
-  var n = permutations.length;
+  var n;
+  if(Array.isArray(permutations)){
+    n = permutations.length;
+  }else{
+    n = permutations;
+  }
+
   for(var i=0; i<n; i++){
     var row = [];
     for(var j=0; j<n; j++){
@@ -59,7 +65,8 @@ window.countNRooksSolutions = function(n) {
   permute( n, []);
   return permutations.length;
 };
-var solveNQueens = function(n){
+var solveNQueens = function(n,stop){
+  var time = Date.now();
   var choices = _.range(0, n);
   var permutations = [];
   var conf = {};
@@ -70,12 +77,18 @@ var solveNQueens = function(n){
 
   while(stack.length>0){
     var v = stack.pop();
-    if(!window.permutationIsValid(v.currentSolution)){
+    if(!window.lastTwoPermutationsValid(v.currentSolution)){
       continue;
     }
     if( v.depth === 0 ){
-      console.log('valid to stack');
+      // console.log('valid to stack');
+      // console.log('Permutation N', permutations.length);
+      // console.log(v.currentSolution.slice());
+
       permutations.push( v.currentSolution );
+      if(stop){
+        return permutations;
+      }
       continue;
     }
     for( var i = 0; i < choices.length; i++ ){
@@ -83,52 +96,53 @@ var solveNQueens = function(n){
       stack.push( {depth: v.depth-1, currentSolution: v.currentSolution.concat(currentPlay)});
     }
   }
-  console.log(permutations);
-  return permutations.length;
+  console.log("Found ",permutations.length,"permutations in: ",Date.now()-time,"ms");
+  return permutations;
 };
 
 // return a matrix (an array of arrays) representing a single nxn chessboard, with n queens placed such that none of them can attack each other
 window.findNQueensSolution = function(n) {
-  var solution = undefined; //fixme
-
-//    procedure DFS-iterative(G,v):
-// 2      let S be a stack
-// 3      S.push(v)
-// 4      while S is not empty
-// 5            v ← S.pop()
-// 6            if v is not labeled as discovered:
-// 7                label v as discovered
-// 8                for all edges from v to w in G.adjacentEdges(v) do
-// 9                    S.push(w)
-
-
-
-
-
-  console.log('Single solution for ' + n + ' queens:', JSON.stringify(solution));
-  return solution;
+  var rawSolution = solveNQueens(n, true)[0];
+  if(!rawSolution){
+    return permutationToMatrix(n);
+  }
+  return permutationToMatrix(rawSolution);
 };
 
 
 // return the number of nxn chessboards that exist, with n queens placed such that none of them can attack each other
 window.countNQueensSolutions = function(n) {
-  var solutionCount = undefined; //fixme
-
-  console.log('Number of solutions for ' + n + ' queens:', solutionCount);
-  return solutionCount;
+  return solveNQueens(n).length;
+};
+// This special case is only valid if we are doing recursively
+window.lastTwoPermutationsValid = function(permutation){
+  var i = permutation.length-1;
+  if(i<0){i=0;}
+  for (var j = permutation.length - 1; j >= 0; j--) {
+    if(j<0){break;}
+    var val= permutation[i];
+    var val2= permutation[j];
+    if(j !== i){
+      if(Math.abs(val-val2) === Math.abs(i-j) || val2-val === 0){
+        return false;
+      }
+    }
+  }
+  return true;
 };
 
-
 window.permutationIsValid = function(permutation){
-  var result = true;
-  _.each(permutation, function(val, index, collection){
-    _.each(permutation, function(val2, index2){
-      if(index !== index2){
-        if(Math.abs(val-val2) === Math.abs(index-index2) || val2-val === 0){
-          result = false;
+  for (var i = permutation.length - 1; i >= 0; i--) {
+    for (var j = permutation.length - 1; j >= 0; j--) {
+      var val= permutation[i];
+      var val2= permutation[j];
+      if(j !== i){
+        if(Math.abs(val-val2) === Math.abs(i-j) || val2-val === 0){
+          console.log("p-Length: " + permutation.length + " i: " + i + " j: " + j);
+          return false;
         }
       }
-    });
-  });
-  return result;
+    }
+  }
+  return true;
 };

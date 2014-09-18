@@ -78,6 +78,7 @@ var solveNQueens = function(n,stop){
   while(stack.length>0){
     var v = stack.pop();
     if(!window.lastTwoPermutationsValid(v.currentSolution)){
+      //Prune branches with conflicts
       continue;
     }
     if( v.depth === 0 ){
@@ -92,10 +93,16 @@ var solveNQueens = function(n,stop){
       continue;
     }
     for( var i = 0; i < choices.length; i++ ){
+      if(v.depth === n && i>=choices.length/2&&n%2===0){
+        break;
+      }
       var currentPlay = choices[i];
+
       stack.push( {depth: v.depth-1, currentSolution: v.currentSolution.concat(currentPlay)});
+
     }
   }
+
   console.log("Found ",permutations.length,"permutations in: ",Date.now()-time,"ms");
   return permutations;
 };
@@ -112,10 +119,13 @@ window.findNQueensSolution = function(n) {
 
 // return the number of nxn chessboards that exist, with n queens placed such that none of them can attack each other
 window.countNQueensSolutions = function(n) {
-  return solveNQueens(n).length;
+  var numPermutations = solveNQueens(n).length;
+  if(n>=4&&n%2===0){return  numPermutations*2}
+  return numPermutations;
 };
 // This special case is only valid if we are doing recursively
 window.lastTwoPermutationsValid = function(permutation){
+  //assume prefix is correct, verify only most recent placement
   var i = permutation.length-1;
   if(i<0){i=0;}
   for (var j = permutation.length - 1; j >= 0; j--) {

@@ -81,7 +81,7 @@ q = function(n){
     //console.log("Created " + n + " Workers to find our queens");
 
   }
-  return numSolutions;
+  return "Calculating...";//numSolutions;
 };
 
 var nToBin = function(n,limit){

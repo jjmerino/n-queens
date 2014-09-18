@@ -1,8 +1,8 @@
-Recursive   Iterative
-n   ms      ms
+Recursive   No Mirror  workers
+n   ms      ms         ms
 12  15      10
 15  2637
-16  17651   10431
+16  17651   10431      4359
 17  126068
-18  982082
-19  8070226
+18  982082  520009ms   234698
+19  8070226 8070226

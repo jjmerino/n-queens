@@ -60,11 +60,67 @@ window.countNRooksSolutions = function(n) {
   return permutations.length;
 };
 
+var solveNQueens = function(n){
+  var choices = _.range(0, n);
+  // var numChoices
+  var stack = [];
+  var set = {};
+  set[choices[0]] = true;
+  stack.push(choices[0]);
 
+  var visitedSolutions = {};
+
+  var successfulPermutation = [];
+  var lastAddedIndex = '';
+  while(stack.length>0)
+  {
+    for(var i=0; i<choices.length; i++){
+      var child = choices[i];
+      if(visitedSolutions[stack.join(',')+','+child]){
+        continue;
+      }
+      if(set[child]){continue;}
+      stack.push(child);
+      set[child] = true;
+      lastAddedIndex=child;
+      //if valid permutation add successful permutations
+      //either way add to set
+    }
+     //create new permutation
+    //check if it is correct
+    if(stack.length === n){
+      visitedSolutions[stack.join(',')]=true;
+      console.log(stack.join(','));
+      if(permutationIsValid(stack)){
+        successfulPermutation.push(stack);
+      }else{
+        //remove last from set
+        delete set[lastAddedIndex];
+
+      }
+    }
+   stack.pop();
+
+  }
+};
 
 // return a matrix (an array of arrays) representing a single nxn chessboard, with n queens placed such that none of them can attack each other
 window.findNQueensSolution = function(n) {
   var solution = undefined; //fixme
+
+//    procedure DFS-iterative(G,v):
+// 2      let S be a stack
+// 3      S.push(v)
+// 4      while S is not empty
+// 5            v ← S.pop()
+// 6            if v is not labeled as discovered:
+// 7                label v as discovered
+// 8                for all edges from v to w in G.adjacentEdges(v) do
+// 9                    S.push(w)
+
+
+
+
 
   console.log('Single solution for ' + n + ' queens:', JSON.stringify(solution));
   return solution;

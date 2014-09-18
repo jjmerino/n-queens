@@ -59,49 +59,32 @@ window.countNRooksSolutions = function(n) {
   permute( n, []);
   return permutations.length;
 };
-
 var solveNQueens = function(n){
   var choices = _.range(0, n);
-  // var numChoices
+  var permutations = [];
+  var conf = {};
+  conf.depth =  n;
+  conf.currentSolution =[];
   var stack = [];
-  var set = {};
-  set[choices[0]] = true;
-  stack.push(choices[0]);
+  stack.push(conf);
 
-  var visitedSolutions = {};
-
-  var successfulPermutation = [];
-  var lastAddedIndex = '';
-  while(stack.length>0)
-  {
-    for(var i=0; i<choices.length; i++){
-      var child = choices[i];
-      if(visitedSolutions[stack.join(',')+','+child]){
-        continue;
-      }
-      if(set[child]){continue;}
-      stack.push(child);
-      set[child] = true;
-      lastAddedIndex=child;
-      //if valid permutation add successful permutations
-      //either way add to set
+  while(stack.length>0){
+    var v = stack.pop();
+    if(!window.permutationIsValid(v.currentSolution)){
+      continue;
     }
-     //create new permutation
-    //check if it is correct
-    if(stack.length === n){
-      visitedSolutions[stack.join(',')]=true;
-      console.log(stack.join(','));
-      if(permutationIsValid(stack)){
-        successfulPermutation.push(stack);
-      }else{
-        //remove last from set
-        delete set[lastAddedIndex];
-
-      }
+    if( v.depth === 0 ){
+      console.log('valid to stack');
+      permutations.push( v.currentSolution );
+      continue;
     }
-   stack.pop();
-
+    for( var i = 0; i < choices.length; i++ ){
+      var currentPlay = choices[i];
+      stack.push( {depth: v.depth-1, currentSolution: v.currentSolution.concat(currentPlay)});
+    }
   }
+  console.log(permutations);
+  return permutations.length;
 };
 
 // return a matrix (an array of arrays) representing a single nxn chessboard, with n queens placed such that none of them can attack each other

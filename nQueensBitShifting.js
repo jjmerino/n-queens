@@ -11,7 +11,6 @@ q = function(n){
   //n is the number of the lowest level in the decision tree
   var fn = function(ld, cols, rd, n){
 
-
     // find a position that does not collide
     // with existing queens attack locations
     //
@@ -25,7 +24,7 @@ q = function(n){
       //bit pattern for the safe location
       var bit = poss & -poss;
 
-      //remove the store safe position from
+      //remove the stored safe position from
       //available safe positions
       poss -= bit;
 
@@ -40,8 +39,7 @@ q = function(n){
       numSolutions++;
     }
   };
-
-  //start within
+  //start
   fn(0,0,0, (1<<n)-1);
 
   console.log("Solved " + n + " Queens in" , Date.now()-setTime + 'ms');

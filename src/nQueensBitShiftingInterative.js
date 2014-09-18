@@ -1,8 +1,5 @@
-q = function(n){
-  var halfN = 1<<(n>>1);
-  if(n%2 !== 0){
-    halfN = 1<<n;
-  }
+qi = function(n){
+  var stack = [];
   var numSolutions = 0;
   var setTime = Date.now();
 
@@ -14,7 +11,20 @@ q = function(n){
     //cols --> 1 === occupied column
 
   //n is the number of the lowest level in the decision tree
-  var fn = function(ld, cols, rd, n, depth){
+  //var fn = function(ld, cols, rd, n){
+
+  stack[stack.length]=[0,0,0, (1<<n)-1];
+  // console.log("1");
+  while(stack.length > 0){
+    var stackCount = stack.length-1;
+    var params = stack[stackCount];
+    stack.length=stackCount;
+    // console.log("2");
+    // console.log("params ", params);
+    var ld = params[0];
+    var cols = params[1];
+    var rd = params[2];
+    var n = params[3];
 
     // find a position that does not collide
     // with existing queens attack locations
@@ -36,11 +46,10 @@ q = function(n){
 
       //recurse with new position occupied to find more
       //safe areas to place queens
-      // console.log(bit , " " , 1<<(realN/2));
-      if(depth === 1&& bit >= halfN){
-      }else{
-        fn( (ld|bit)<<1, cols|bit, (rd|bit)>>1, n, depth<<1);
-      }
+      //fn( (ld|bit)<<1, cols|bit, (rd|bit)>>1, n);
+      console.log(stackCount + " " + stack.length);
+      stack[stack.length]=[(ld|bit)<<1, cols|bit, (rd|bit)>>1, n];
+      // console.log("3");
     }
 
     //if we have reached the lowest level,
@@ -48,22 +57,11 @@ q = function(n){
     if(cols === n){
       numSolutions++;
     }
-  };
+  }
+  //};
   //start
-  fn(0,0,0, (1<<n)-1, 1);
+  //fn(0,0,0, (1<<n)-1);
 
   console.log("Solved " + n + " Queens in" , Date.now()-setTime + 'ms');
-  if(n%2 === 0){
-    numSoultions *=2;
-  }
   return numSolutions;
-};
-
-var nToBin = function(n,limit){
-  var str = _.reduce(_.range(0,32-n.toString(2).length+1),
-      function(prev,val){
-        return prev+'0';
-      }
-    ,'')+n.toString(2);
-  return str.substr(str.length-limit);
 };

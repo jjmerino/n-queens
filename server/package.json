@@ -1,0 +1,9 @@
+{
+  "name": "nqueens-runner",
+  "description": "nqueens fast run",
+  "version": "0.0.1",
+  "private": true,
+  "dependencies": {
+    "express": "4.x"
+  }
+}

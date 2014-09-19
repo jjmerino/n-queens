@@ -10,6 +10,6 @@ app.use('/public',express.static(__dirname + '/queens/public'));
 var server = app.listen(3000, function() {
   console.log('Starting algorithm');
 
-  Queen.startWorking(16);
+  Queen.startWorking(8);
   console.log('Listening on port %d', server.address().port);
 });

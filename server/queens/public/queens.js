@@ -7,7 +7,7 @@ var partialQueen = function(paramsObj){
   var ld = paramsObj.ld;
   var cols = paramsObj.cols;
   var rd = paramsObj.rd;
-  var startn = paramsObj.rd;
+  var startn = paramsObj.n;
   var depth = paramsObj.depth;
   var actualN = paramsObj.actualN;
 
@@ -63,7 +63,6 @@ var partialQueen = function(paramsObj){
       // console.log(bit , " " , 1<<(realN/2));
       if(depth === 1&& bit >= halfN){
       }else if(depth===1&& useWorkers){
-        console.log('depth of 1');
         var worker = new Worker('src/worker.js');
         worker.addEventListener('message', workerCallback, false);
         worker.postMessage({ld:(ld|bit)<<1, cols:cols|bit, rd: (rd|bit)>>1, n: n,depth: depth<<1});
@@ -85,7 +84,7 @@ var partialQueen = function(paramsObj){
 
   if(!useWorkers){
     computationDone(numSolutions);
-    console.log("Solved " + n + " Queens in" , Date.now()-setTime + 'ms. No workers');
+    console.log("Solved " + actualN + " Queens in" , Date.now()-setTime + 'ms. No workers');
 
     numSolutions *=2;
   }else{
